@@ -13,6 +13,7 @@ from numbers import Real
 import numpy as np
 import proglog
 from imageio import imread, imsave
+import cv2
 from PIL import Image
 
 from moviepy.Clip import Clip
@@ -1083,7 +1084,11 @@ class ImageClip(VideoClip):
 
         if not isinstance(img, np.ndarray):
             # img is a string or path-like object, so read it in from disk
-            img = imread(img)
+            # img = imread(img)
+            img_array = np.fromfile(img, np.uint8)
+            img_bgr = cv2.imdecode(img_array, cv2.IMREAD_UNCHANGED)
+            img = cv2.cvtColor(img_bgr, cv2.COLOR_BGRA2RGBA)
+            del img_array, img_bgr
 
         if len(img.shape) == 3:  # img is (now) a RGB(a) numpy array
             if img.shape[2] == 4:
